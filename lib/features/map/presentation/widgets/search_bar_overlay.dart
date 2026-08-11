@@ -5,13 +5,11 @@ import '../../../../core/services/mapbox_geocoding_service.dart';
 import '../../../navigation/providers/navigation_provider.dart';
 
 class SearchBarOverlay extends ConsumerStatefulWidget {
-  final int pulsePoints;
   final Function(LatLng position, String name) onPlaceSelected;
   final Function(bool isSearching)? onSearchingStateChanged;
 
   const SearchBarOverlay({
     super.key,
-    required this.pulsePoints,
     required this.onPlaceSelected,
     this.onSearchingStateChanged,
   });
@@ -182,38 +180,6 @@ class _SearchBarOverlayState extends ConsumerState<SearchBarOverlay> {
                     ),
                   ),
                 ),
-              const SizedBox(width: 8),
-              // Badge de PulsePoints — naranja Waze
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF4E8),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: const Color(0xFFFF9500).withValues(alpha: 0.7),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.bolt_rounded,
-                      color: Color(0xFFFF9500),
-                      size: 13,
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      '${widget.pulsePoints}',
-                      style: const TextStyle(
-                        color: Color(0xFFCC7700),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),

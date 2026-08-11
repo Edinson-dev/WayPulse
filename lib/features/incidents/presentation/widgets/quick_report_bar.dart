@@ -75,7 +75,7 @@ class QuickReportBar extends StatelessWidget {
                   onReport(type, '$label reportado en tiempo real');
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('⚡ ¡Reporte de $label publicado! (+15 pts)'),
+                      content: Text('⚡ ¡Reporte de $label publicado!'),
                       backgroundColor: color,
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),

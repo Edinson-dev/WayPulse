@@ -48,7 +48,7 @@ class ReportIncidentModal extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Ayuda a la comunidad WayPulse y gana 15 PulsePoints',
+            'Ayuda a la comunidad WayPulse reportando eventos en la vía',
             style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
           ),
           const SizedBox(height: 24),

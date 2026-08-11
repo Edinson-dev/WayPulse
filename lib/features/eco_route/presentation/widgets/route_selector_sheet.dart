@@ -76,7 +76,7 @@ class RouteSelectorSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.close_rounded, color: Colors.white70, size: 20),
@@ -108,7 +108,7 @@ class RouteSelectorSheet extends StatelessWidget {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? const Color(0xFF00C8FF).withOpacity(0.18)
+                          ? const Color(0xFF00C8FF).withValues(alpha: 0.18)
                           : const Color(0xFF0F172A),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
@@ -135,7 +135,7 @@ class RouteSelectorSheet extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF00E676).withOpacity(0.2),
+                                  color: const Color(0xFF00E676).withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: const Text(
@@ -166,32 +166,34 @@ class RouteSelectorSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Botones Principales estilo Waze: Ir Ahora (Cyan) y Salir Más Tarde (Dark)
+          // Botones de Acción: Cancelar e Ir Ahora
           Row(
             children: [
-              Expanded(
-                child: SizedBox(
-                  height: 50,
-                  child: OutlinedButton(
-                    onPressed: onCancel,
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFF334155)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
+              if (onCancel != null)
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(
+                    height: 50,
+                    child: OutlinedButton(
+                      onPressed: onCancel,
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.white30),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'Cancelar',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
+              if (onCancel != null) const SizedBox(width: 12),
               Expanded(
                 flex: 2,
                 child: SizedBox(
@@ -201,7 +203,7 @@ class RouteSelectorSheet extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00C8FF),
                       elevation: 4,
-                      shadowColor: const Color(0xFF00C8FF).withOpacity(0.4),
+                      shadowColor: const Color(0xFF00C8FF).withValues(alpha: 0.4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),

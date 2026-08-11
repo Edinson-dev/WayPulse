@@ -139,7 +139,7 @@ class RealtimeIncidentService {
   Future<void> voteIncident(String incidentId, bool isPositive) async {
     try {
       if (isPositive) {
-        // Confirmación (+5 pts): Extender vigencia y sumar upvote
+        // Confirmación: Extender vigencia y sumar upvote
         await _dio.patch(
           '$_databaseUrl/$incidentId.json',
           data: {

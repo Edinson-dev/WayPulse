@@ -56,13 +56,11 @@ class TripSummaryDialog extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildStat('Distancia', '${distanceKm.toStringAsFixed(1)} km', Icons.straighten_rounded),
               Container(width: 1, height: 32, color: Colors.white24),
               _buildStat('Tiempo', '$durationMinutes min', Icons.timer_rounded),
-              Container(width: 1, height: 32, color: Colors.white24),
-              _buildStat('Recompensa', '+$pulsePointsEarned pts', Icons.bolt_rounded, color: const Color(0xFFFF6B00)),
             ],
           ),
           const SizedBox(height: 24),

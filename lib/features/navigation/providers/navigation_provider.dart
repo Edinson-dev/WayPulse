@@ -163,6 +163,14 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
     }
   }
 
+  void setVehiclePlateDigit(int digit) {
+    state = state.copyWith(vehiclePlateDigit: digit.clamp(0, 9));
+  }
+
+  void setSelectedCity(ColombianCity city) {
+    state = state.copyWith(selectedCity: city);
+  }
+
   void _initLocationListener() {
     _locationService.getRealtimeLocationStream().listen((userLoc) {
       state = state.copyWith(currentLocation: userLoc);
@@ -332,17 +340,6 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
 
   void voteIncident(String incidentId, bool isPositive) {
     _realtimeIncidentService.voteIncident(incidentId, isPositive);
-    if (isPositive) {
-      state = state.copyWith(pulsePoints: state.pulsePoints + 5);
-    }
-  }
-
-  void setVehiclePlateDigit(int digit) {
-    state = state.copyWith(vehiclePlateDigit: digit);
-  }
-
-  void setSelectedCity(ColombianCity city) {
-    state = state.copyWith(selectedCity: city);
   }
 
   String _getIncidentTitle(IncidentType type) {
