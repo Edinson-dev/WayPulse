@@ -12,6 +12,7 @@ class RouteSelectorSheet extends StatelessWidget {
   final VoidCallback onStartNavigation;
   final VoidCallback? onCancel;
   final PicoPlacaResult? picoPlacaResult;
+  final VoidCallback? onConfigurePicoPlaca;
 
   const RouteSelectorSheet({
     super.key,
@@ -21,6 +22,7 @@ class RouteSelectorSheet extends StatelessWidget {
     required this.onStartNavigation,
     this.onCancel,
     this.picoPlacaResult,
+    this.onConfigurePicoPlaca,
   });
 
   @override
@@ -87,7 +89,10 @@ class RouteSelectorSheet extends StatelessWidget {
           const SizedBox(height: 12),
 
           if (picoPlacaResult != null)
-            PicoPlacaBadge(result: picoPlacaResult!),
+            PicoPlacaBadge(
+              result: picoPlacaResult!,
+              onTap: onConfigurePicoPlaca,
+            ),
 
           // Lista Horizontal / Compacta de Opciones de Ruta
           SizedBox(

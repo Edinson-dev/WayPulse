@@ -122,16 +122,23 @@ class _NavigationModeScreenState extends ConsumerState<NavigationModeScreen> wit
     // Escuchar movimiento continuo del GPS para actualizar cámara en orientación Heading-Up (TomTom 3D)
     ref.listen(navigationProvider, (previous, next) {
       if (_isFollowingGps && next.currentLocation != null) {
-        // Zoom Adaptativo Inmersivo según velocidad
-        double adaptiveZoom = 18.3;
-        final spd = next.currentLocation!.speedKmh;
-        if (spd > 65.0) {
-          adaptiveZoom = 17.3; // Carretera rápida: ampliar visión
-        } else if (spd < 20.0) {
-          adaptiveZoom = 18.5; // Detención / Giros: visión ultra-cercana
+        final prevLoc = previous?.currentLocation;
+        final currLoc = next.currentLocation!;
+
+        if (prevLoc == null ||
+            prevLoc.position != currLoc.position ||
+            (prevLoc.heading - currLoc.heading).abs() > 1.0) {
+          // Zoom Adaptativo Inmersivo según velocidad
+          double adaptiveZoom = 18.3;
+          final spd = currLoc.speedKmh;
+          if (spd > 65.0) {
+            adaptiveZoom = 17.3; // Carretera rápida: ampliar visión
+          } else if (spd < 20.0) {
+            adaptiveZoom = 18.5; // Detención / Giros: visión ultra-cercana
+          }
+          _mapController.move(currLoc.position, adaptiveZoom);
+          _mapController.rotate(-(currLoc.heading));
         }
-        _mapController.move(next.currentLocation!.position, adaptiveZoom);
-        _mapController.rotate(-(next.currentLocation!.heading));
       }
     });
 

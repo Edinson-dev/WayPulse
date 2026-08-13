@@ -27,7 +27,6 @@ import '../widgets/map_style_selector_sheet.dart';
 import '../../../incidents/presentation/widgets/quick_report_bar.dart';
 import '../../../incidents/models/medellin_closure_model.dart';
 import '../../../incidents/providers/medellin_closures_provider.dart';
-import '../../../navigation/presentation/widgets/pico_placa_badge.dart';
 import '../../../navigation/presentation/widgets/pico_placa_config_sheet.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
@@ -683,35 +682,10 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
               ),
             ),
 
-          // Overlay Superior: Badge interactivo de Pico y Placa (Ubicado justo bajo la barra de búsqueda)
-          if (!_isSearchingDropdownOpen && navState.availableRoutes.isEmpty && navState.picoPlacaResult != null)
-            Positioned(
-              top: topInset + 56,
-              left: 12,
-              right: 12,
-              child: PicoPlacaBadge(
-                result: navState.picoPlacaResult!,
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Colors.transparent,
-                    builder: (ctx) => PicoPlacaConfigSheet(
-                      initialDigit: navState.vehiclePlateDigit,
-                      initialCity: navState.selectedCity,
-                      onSave: (digit, city) {
-                        navNotifier.setVehiclePlateDigit(digit);
-                        navNotifier.setSelectedCity(city);
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-
-          // Overlay Superior Izquierdo: Badge de Clima y Estado de Vía
+          // Overlay Superior Izquierdo: Badge de Clima y Estado de Vía (Ubicado justo bajo la barra de búsqueda)
           if (!_isSearchingDropdownOpen && navState.availableRoutes.isEmpty)
             Positioned(
-              top: topInset + 118,
+              top: topInset + 54,
               left: 12,
               child: const WeatherBadgeWidget(
                 condition: '⛅ Sol Parcial',
@@ -723,7 +697,7 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
           // Overlay Izquierdo: Velocímetro
           if (!_isSearchingDropdownOpen && navState.availableRoutes.isEmpty)
             Positioned(
-              top: topInset + 158,
+              top: topInset + 94,
               left: 12,
               child: SpeedLimitBadge(
                 currentSpeedKmh: currentSpeed,
@@ -950,6 +924,20 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
                 onStartNavigation: () => navNotifier.startNavigation(),
                 onCancel: () => navNotifier.cancelRoute(),
                 picoPlacaResult: navState.picoPlacaResult,
+                onConfigurePicoPlaca: () {
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    builder: (ctx) => PicoPlacaConfigSheet(
+                      initialDigit: navState.vehiclePlateDigit,
+                      initialCity: navState.selectedCity,
+                      onSave: (digit, city) {
+                        navNotifier.setVehiclePlateDigit(digit);
+                        navNotifier.setSelectedCity(city);
+                      },
+                    ),
+                  );
+                },
               ),
             ),
         ],

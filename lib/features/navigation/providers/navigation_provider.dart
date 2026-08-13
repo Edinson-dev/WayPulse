@@ -187,6 +187,7 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
 
   bool _isRerouting = false;
   DateTime? _lastRerouteTime;
+  int _lastClosestIndex = 0;
 
   void _updateTrimmedRoute(UserLocation userLoc) {
     final route = state.selectedRoute;
@@ -194,16 +195,30 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
     final pts = route.polylinePoints;
     if (pts.length < 2) return;
 
-    // Encontrar el punto de la polilínea más cercano a la ubicación actual del usuario
-    int closestIdx = 0;
+    // Búsqueda en ventana deslizante O(1) cerca del índice actual para máximo rendimiento
+    int closestIdx = _lastClosestIndex;
     double minDistance = double.infinity;
     const distance = Distance();
 
-    for (int i = 0; i < pts.length; i++) {
+    final searchStart = (_lastClosestIndex - 5).clamp(0, pts.length - 1);
+    final searchEnd = (_lastClosestIndex + 60).clamp(0, pts.length);
+
+    for (int i = searchStart; i < searchEnd; i++) {
       final d = distance.as(LengthUnit.Meter, userLoc.position, pts[i]);
       if (d < minDistance) {
         minDistance = d;
         closestIdx = i;
+      }
+    }
+
+    // Si la distancia mínima en la ventana es alta (>50m), realizar escaneo completo para detectar desvío
+    if (minDistance > 50.0) {
+      for (int i = 0; i < pts.length; i += 2) {
+        final d = distance.as(LengthUnit.Meter, userLoc.position, pts[i]);
+        if (d < minDistance) {
+          minDistance = d;
+          closestIdx = i;
+        }
       }
     }
 
@@ -213,6 +228,7 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
       if (_lastRerouteTime == null || now.difference(_lastRerouteTime!).inSeconds >= 5) {
         _isRerouting = true;
         _lastRerouteTime = now;
+        _lastClosestIndex = 0;
         _ttsService.speakInstruction('Recalculando ruta...');
         calculateRoutesTo(state.destination!, state.destinationName).then((_) {
           _isRerouting = false;
@@ -223,8 +239,9 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
       }
     }
 
-    // Si el usuario avanza por la ruta (dentro del margen de 35 metros), recortar los puntos ya recorridos
-    if (minDistance <= 35.0 && closestIdx > 0 && closestIdx < pts.length - 1) {
+    // Solo actualizar el estado cuando el vehículo avanza significativamente en la polilínea
+    if (minDistance <= 35.0 && closestIdx > _lastClosestIndex && closestIdx < pts.length - 1) {
+      _lastClosestIndex = closestIdx;
       final remainingPts = [userLoc.position, ...pts.sublist(closestIdx)];
       final updatedRoute = route.copyWith(polylinePoints: remainingPts);
       state = state.copyWith(selectedRoute: updatedRoute);

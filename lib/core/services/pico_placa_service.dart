@@ -1,4 +1,4 @@
-enum ColombianCity { medellin, bogota, cali, barranquilla }
+enum ColombianCity { medellin, bogota, cali, barranquilla, bucaramanga }
 
 class PicoPlacaResult {
   final bool isRestricted;
@@ -81,6 +81,21 @@ class PicoPlacaService {
         timeWindow = 'Sin Restricción Vehículos Particulares';
         restrictedDigits = [];
         break;
+
+      case ColombianCity.bucaramanga:
+        timeWindow = '6:00 AM - 8:00 PM';
+        if (weekday == 1) {
+          restrictedDigits = [3, 4];
+        } else if (weekday == 2) {
+          restrictedDigits = [5, 6];
+        } else if (weekday == 3) {
+          restrictedDigits = [7, 8];
+        } else if (weekday == 4) {
+          restrictedDigits = [9, 0];
+        } else if (weekday == 5) {
+          restrictedDigits = [1, 2];
+        }
+        break;
     }
 
     final isRestricted = restrictedDigits.contains(plateLastDigit);
@@ -91,7 +106,7 @@ class PicoPlacaService {
       restrictedDigitsStr: restrictedDigits.join(', '),
       timeWindow: timeWindow,
       message: isRestricted
-          ? '🚨 ¡ATENCIÓN! Tu placa ($plateLastDigit) TIENE PICO Y PLACA en $cityName ($timeWindow)'
+          ? '🚨 Tu placa ($plateLastDigit) TIENE PICO Y PLACA hoy en $cityName ($timeWindow)'
           : '🟢 Tu placa ($plateLastDigit) NO tiene restricción hoy en $cityName',
     );
   }
@@ -106,6 +121,8 @@ class PicoPlacaService {
         return 'Cali';
       case ColombianCity.barranquilla:
         return 'Barranquilla';
+      case ColombianCity.bucaramanga:
+        return 'Bucaramanga';
     }
   }
 }

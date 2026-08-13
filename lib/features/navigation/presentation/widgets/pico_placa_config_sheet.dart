@@ -289,6 +289,8 @@ class _PicoPlacaConfigSheetState extends State<PicoPlacaConfigSheet> {
         return 'Cali';
       case ColombianCity.barranquilla:
         return 'Barranquilla';
+      case ColombianCity.bucaramanga:
+        return 'Bucaramanga';
     }
   }
 }
