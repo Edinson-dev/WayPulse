@@ -7,6 +7,7 @@ class MapControlsWidget extends StatelessWidget {
   final VoidCallback onToggleLayers;
   final VoidCallback? onToggleTraffic;
   final bool isTrafficActive;
+  final VoidCallback? onConfigurePicoPlaca;
 
   const MapControlsWidget({
     super.key,
@@ -16,6 +17,7 @@ class MapControlsWidget extends StatelessWidget {
     required this.onToggleLayers,
     this.onToggleTraffic,
     this.isTrafficActive = true,
+    this.onConfigurePicoPlaca,
   });
 
   @override
@@ -43,7 +45,16 @@ class MapControlsWidget extends StatelessWidget {
           onPressed: onToggleLayers,
         ),
         const SizedBox(height: 10),
-        // Botón de recentrar — naranja Waze cuando activo
+        if (onConfigurePicoPlaca != null) ...[
+          _buildButton(
+            icon: Icons.directions_car_rounded,
+            onPressed: onConfigurePicoPlaca!,
+            accentColor: const Color(0xFF10B981),
+            iconColor: Colors.white,
+          ),
+          const SizedBox(height: 10),
+        ],
+        // Botón de recentrar — azul marino Waze cuando activo
         _buildButton(
           icon: Icons.my_location_rounded,
           onPressed: onRecenter,

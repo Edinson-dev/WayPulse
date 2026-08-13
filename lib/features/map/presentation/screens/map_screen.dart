@@ -682,10 +682,10 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
               ),
             ),
 
-          // Overlay Superior Izquierdo: Badge de Clima y Estado de Vía (Ubicado justo bajo la barra de búsqueda)
+          // Overlay Superior Izquierdo: Badge de Clima y Estado de Vía (Ubicado justo bajo la barra de búsqueda sin solapar)
           if (!_isSearchingDropdownOpen && navState.availableRoutes.isEmpty)
             Positioned(
-              top: topInset + 54,
+              top: topInset + 106,
               left: 12,
               child: const WeatherBadgeWidget(
                 condition: '⛅ Sol Parcial',
@@ -694,10 +694,10 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
               ),
             ),
 
-          // Overlay Izquierdo: Velocímetro
+          // Overlay Izquierdo: Velocímetro y Límite de Velocidad
           if (!_isSearchingDropdownOpen && navState.availableRoutes.isEmpty)
             Positioned(
-              top: topInset + 94,
+              top: topInset + 150,
               left: 12,
               child: SpeedLimitBadge(
                 currentSpeedKmh: currentSpeed,
@@ -705,10 +705,10 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
               ),
             ),
 
-          // Overlay Derecho: Controles del Mapa 2D/3D (Alineado con el panel superior derecho)
+          // Overlay Derecho: Controles del Mapa 2D/3D / Tráfico / Estilos
           if (!_isSearchingDropdownOpen)
             Positioned(
-              top: topInset + (navState.availableRoutes.isNotEmpty ? 70 : 108),
+              top: topInset + (navState.availableRoutes.isNotEmpty ? 70 : 106),
               right: 12,
               child: MapControlsWidget(
                 is3DMode: _is3DMode,
@@ -754,6 +754,20 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
                       currentStyleIndex: _styleIndex,
                       onSelectStyle: (idx) {
                         setState(() => _styleIndex = idx);
+                      },
+                    ),
+                  );
+                },
+                onConfigurePicoPlaca: () {
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    builder: (ctx) => PicoPlacaConfigSheet(
+                      initialDigit: navState.vehiclePlateDigit,
+                      initialCity: navState.selectedCity,
+                      onSave: (digit, city) {
+                        navNotifier.setVehiclePlateDigit(digit);
+                        navNotifier.setSelectedCity(city);
                       },
                     ),
                   );
