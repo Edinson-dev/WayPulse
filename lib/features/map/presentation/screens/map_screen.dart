@@ -338,18 +338,55 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
                                 shape: BoxShape.circle,
                               ),
                             ),
-                            // Chevron naranja sólido Waze
-                            const Icon(
-                              Icons.navigation_rounded,
-                              color: Color(0xFFFF6B00),
-                              size: 42,
-                              shadows: [
-                                Shadow(
-                                  color: Color(0x88FF6B00),
-                                  blurRadius: 16,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
+                            // Chevron 3D estilo Waze
+                            Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()
+                                ..setEntry(3, 2, 0.003)
+                                ..rotateX(0.40),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Sombra proyectada en mapa
+                                  Positioned(
+                                    top: 5,
+                                    child: Transform.scale(
+                                      scaleY: 0.6,
+                                      child: Icon(
+                                        Icons.navigation_rounded,
+                                        color: Colors.black.withValues(alpha: 0.30),
+                                        size: 46,
+                                      ),
+                                    ),
+                                  ),
+                                  // Borde exterior blanco
+                                  const Icon(
+                                    Icons.navigation_rounded,
+                                    color: Colors.white,
+                                    size: 48,
+                                    shadows: [
+                                      Shadow(
+                                        color: Color(0x88FF6B00),
+                                        blurRadius: 12,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  // Cuerpo con gradiente Naranja Waze
+                                  ShaderMask(
+                                    shaderCallback: (bounds) => const LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [Color(0xFFFF9E00), Color(0xFFFF5500)],
+                                    ).createShader(bounds),
+                                    child: const Icon(
+                                      Icons.navigation_rounded,
+                                      color: Colors.white,
+                                      size: 42,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

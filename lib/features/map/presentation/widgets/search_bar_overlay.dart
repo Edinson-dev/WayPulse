@@ -91,6 +91,43 @@ class _SearchBarOverlayState extends ConsumerState<SearchBarOverlay> {
                 selectedMode: navState.selectedTransportMode,
                 onSelect: (m) => navNotifier.setTransportMode(m),
               ),
+              const SizedBox(width: 4),
+              // Chip rápido de Gasolineras
+              GestureDetector(
+                onTap: () {
+                  _controller.text = 'Gasolinera';
+                  _onSearchChanged('Gasolinera');
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF9500),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFF9500).withValues(alpha: 0.35),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.local_gas_station_rounded, size: 15, color: Colors.white),
+                      SizedBox(width: 4),
+                      Text(
+                        'Gasolineras',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),

@@ -6,7 +6,11 @@ import 'config/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await WakelockPlus.enable();
+  try {
+    await WakelockPlus.enable();
+  } catch (_) {
+    // Wakelock puede no estar soportado en algunas plataformas web
+  }
   runApp(
     const ProviderScope(
       child: WayPulseApp(),

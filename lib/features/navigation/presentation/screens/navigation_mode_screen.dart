@@ -17,6 +17,8 @@ import 'dart:async';
 import '../../../../core/services/tts_voice_service.dart';
 import '../widgets/route_progress_bar_widget.dart';
 
+import '../../../incidents/providers/medellin_closures_provider.dart';
+
 class NavigationModeScreen extends ConsumerStatefulWidget {
   const NavigationModeScreen({super.key});
 
@@ -33,6 +35,7 @@ class _NavigationModeScreenState extends ConsumerState<NavigationModeScreen> wit
   final TtsVoiceService _ttsService = TtsVoiceService();
   int _lastSpokenStepIndex = -1;
   DateTime? _lastSpeedingVoiceAlertTime;
+  DateTime? _lastClosureVoiceAlertTime;
 
   @override
   void initState() {
@@ -116,6 +119,32 @@ class _NavigationModeScreenState extends ConsumerState<NavigationModeScreen> wit
         _ttsService.speakInstruction('Atención: estás excediendo el límite de velocidad de ${navState.currentSpeedLimit.toInt()} kilómetros por hora.');
       }
     }
+
+    // Alerta por Voz de Cierres de Vía de Medellín Cercanos (< 400m)
+    ref.listen(medellinClosuresProvider, (prev, next) {
+      next.whenData((closures) {
+        final now = DateTime.now();
+        if (_lastClosureVoiceAlertTime != null &&
+            now.difference(_lastClosureVoiceAlertTime!).inSeconds < 25) {
+          return;
+        }
+
+        const distanceCalc = Distance();
+        for (final closure in closures) {
+          final pos = closure.point ?? (closure.polylines.isNotEmpty && closure.polylines.first.isNotEmpty ? closure.polylines.first.first : null);
+          if (pos != null) {
+            final distMeters = distanceCalc.as(LengthUnit.Meter, currentPos, pos);
+            if (distMeters <= 400) {
+              _lastClosureVoiceAlertTime = now;
+              _ttsService.speakInstruction(
+                'Alerta de vía: A ${distMeters.toInt()} metros hay un reporte de ${closure.title.isNotEmpty ? closure.title : "cierre vial en Medellín"}.',
+              );
+              break;
+            }
+          }
+        }
+      });
+    });
 
     final topInset = MediaQuery.of(context).padding.top + 10;
 
@@ -237,23 +266,69 @@ class _NavigationModeScreenState extends ConsumerState<NavigationModeScreen> wit
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                            // Chevron azul sólido
-                            Icon(
-                              Icons.navigation_rounded,
-                              color: currentSpeed > navState.currentSpeedLimit
-                                  ? const Color(0xFFFF3B30)
-                                  : const Color(0xFF1B9CF4),
-                              size: 50,
-                              shadows: [
-                                Shadow(
-                                  color: (currentSpeed > navState.currentSpeedLimit
-                                      ? const Color(0xFFFF3B30)
-                                      : const Color(0xFF1B9CF4))
-                                    .withValues(alpha: 0.5),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
+                            // Flecha Navegación 3D Estilo Waze
+                            Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()
+                                ..setEntry(3, 2, 0.003) // Perspectiva 3D
+                                ..rotateX(0.45), // Inclinación 3D hacia adelante
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Sombra proyectada en el suelo (Efecto 3D elevación)
+                                  Positioned(
+                                    top: 6,
+                                    child: Transform.scale(
+                                      scaleY: 0.6,
+                                      child: Icon(
+                                        Icons.navigation_rounded,
+                                        color: Colors.black.withValues(alpha: 0.35),
+                                        size: 52,
+                                      ),
+                                    ),
+                                  ),
+                                  // Borde exterior blanco deslumbrante
+                                  Icon(
+                                    Icons.navigation_rounded,
+                                    color: Colors.white,
+                                    size: 54,
+                                    shadows: [
+                                      Shadow(
+                                        color: (currentSpeed > navState.currentSpeedLimit
+                                            ? const Color(0xFFFF3B30)
+                                            : const Color(0xFF1B9CF4))
+                                          .withValues(alpha: 0.6),
+                                        blurRadius: 15,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  // Cuerpo principal 3D con Gradiente Azul Neón / Rojo exceso
+                                  ShaderMask(
+                                    shaderCallback: (bounds) => LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: currentSpeed > navState.currentSpeedLimit
+                                          ? [const Color(0xFFFF6B6B), const Color(0xFFCC0000)]
+                                          : [const Color(0xFF55C7FF), const Color(0xFF0066FF)],
+                                    ).createShader(bounds),
+                                    child: const Icon(
+                                      Icons.navigation_rounded,
+                                      color: Colors.white,
+                                      size: 48,
+                                    ),
+                                  ),
+                                  // Brillo superior 3D (Highlight)
+                                  Positioned(
+                                    top: 10,
+                                    child: Icon(
+                                      Icons.navigation_rounded,
+                                      color: Colors.white.withValues(alpha: 0.40),
+                                      size: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

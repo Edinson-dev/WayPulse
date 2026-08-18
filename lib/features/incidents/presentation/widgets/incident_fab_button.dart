@@ -20,7 +20,7 @@ class IncidentFabButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF6B00).withOpacity(0.5),
+              color: const Color(0xFFFF6B00).withValues(alpha: 0.3),
               blurRadius: 16,
               offset: const Offset(0, 6),
             )
